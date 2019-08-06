@@ -4,25 +4,56 @@ package zjl.com.addsubview;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.support.annotation.Nullable;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
-public class addsubView extends LinearLayout implements View.OnClickListener {
-
-    public Button btnAdd,btnSubstract;
-    public TextView tvValue;
-    private ValueChangeListener valueChangeListener;
+public class addsubView extends LinearLayout implements View.OnClickListener, TextWatcher {
 
     public int value = 0;
     public int defaultMinValue = 0;
-    public int defaultMaxValue = Integer.MAX_VALUE;
+    public int defaultMaxValue = 999;
     public int minValue,maxValue;
+    public int defaultWidth = 100;
+    public int defaultEtTextSize = 18;
+    public int defaultBtnTextSize = 36;
+
+    public Button btnAdd,btnSubstract;
+    public EditText etValue;
+    private ValueChangeListener valueChangeListener;
+    @Override
+    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+    }
+
+    @Override
+    public void onTextChanged(CharSequence s, int start, int before, int count) {
+        String temp = s.toString() ;
+        if (temp.length() > 3){
+            temp = temp.substring(0,3);
+            etValue.setText(temp );
+        }
+        etValue.setSelection(temp.length());
+        if (!TextUtils.isEmpty(temp)){
+            this.value = Integer.valueOf(temp);
+        }else{
+            this.value = 0;
+        }
+    }
+
+    @Override
+    public void afterTextChanged(Editable s) {
+
+    }
 
     public interface ValueChangeListener{
         void onValueChange(View view, int value);
@@ -33,7 +64,7 @@ public class addsubView extends LinearLayout implements View.OnClickListener {
     }
 
     public int getValue() {
-        String sValue = tvValue.getText().toString().trim();
+        String sValue = etValue.getText().toString().trim();
         if (!TextUtils.isEmpty(sValue)){
             value = Integer.valueOf(sValue);
         }
@@ -41,9 +72,13 @@ public class addsubView extends LinearLayout implements View.OnClickListener {
     }
 
     public void setValue(int value) {
-        this.value = value;
-        tvValue.setText(this.value + "");
-        valueChangeListener.onValueChange(this,value);
+        if (valueChangeListener != null){
+            valueChangeListener.onValueChange(this,value);
+            this.value = value;
+            etValue.setText(this.value + "");
+        }else{
+            Toast.makeText(getContext(),"please add valueChangeListener" ,Toast.LENGTH_SHORT ).show();
+        }
     }
 
     public int getMinValue() {
@@ -78,13 +113,13 @@ public class addsubView extends LinearLayout implements View.OnClickListener {
         btnAdd.setOnClickListener(this);
         btnSubstract = (Button)findViewById(R.id.btn_substract);
         btnSubstract.setOnClickListener(this);
-        tvValue = (TextView) findViewById(R.id.tv_value);
+        etValue = (EditText) findViewById(R.id.et_value);
 
         TypedArray obtainStyledAttributes = getContext().obtainStyledAttributes(attrs, R.styleable.addsubView);
-        int btnWidth = obtainStyledAttributes.getDimensionPixelSize(R.styleable.addsubView_btnWidth, LayoutParams.WRAP_CONTENT);
-        int tvWidth = obtainStyledAttributes.getDimensionPixelSize(R.styleable.addsubView_tvWidth, 50);
-        int tvTextSize = obtainStyledAttributes.getDimensionPixelSize(R.styleable.addsubView_tvTextSize, 0);
-        int btnTextSize = obtainStyledAttributes.getDimensionPixelSize(R.styleable.addsubView_btnTextSize, 0);
+        int btnWidth = obtainStyledAttributes.getDimensionPixelSize(R.styleable.addsubView_btnWidth, defaultWidth);
+        int tvWidth = obtainStyledAttributes.getDimensionPixelSize(R.styleable.addsubView_tvWidth, defaultWidth);
+        int tvTextSize = obtainStyledAttributes.getDimensionPixelSize(R.styleable.addsubView_tvTextSize, defaultEtTextSize);
+        int btnTextSize = obtainStyledAttributes.getDimensionPixelSize(R.styleable.addsubView_btnTextSize, defaultBtnTextSize);
         minValue = obtainStyledAttributes.getInteger(R.styleable.addsubView_minValue,defaultMinValue);
         maxValue = obtainStyledAttributes.getInteger(R.styleable.addsubView_maxValue,defaultMaxValue);
         obtainStyledAttributes.recycle();
@@ -98,10 +133,12 @@ public class addsubView extends LinearLayout implements View.OnClickListener {
         }
 
         LayoutParams textParams = new LayoutParams(tvWidth, LayoutParams.MATCH_PARENT);
-        tvValue.setLayoutParams(textParams);
+        etValue.setLayoutParams(textParams);
         if (tvTextSize != 0) {
-            tvValue.setTextSize(tvTextSize);
+            etValue.setTextSize(tvTextSize);
         }
+
+        etValue.addTextChangedListener(this);
     }
 
     @Override

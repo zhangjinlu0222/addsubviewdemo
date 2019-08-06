@@ -6,8 +6,8 @@
 
     <Button
         android:id="@+id/btn_substract"
-        android:layout_width="40dp"
-        android:layout_height="match_parent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:background="@drawable/button_state_selector"
         android:gravity="center"
         android:text="@string/sub"
@@ -15,20 +15,20 @@
         android:textSize="24sp"
         android:textStyle="bold" />
 
-    <TextView
-        android:id="@+id/tv_value"
+    <EditText
+        android:id="@+id/et_value"
         android:layout_width="50dp"
         android:layout_height="match_parent"
         android:background="@drawable/value_selector"
         android:backgroundTint="#F5F5F5"
         android:gravity="center"
+        android:inputType="number"
         android:padding="6dp"
-        android:text="000"
         android:textSize="18sp" />
 
     <Button
         android:id="@+id/btn_add"
-        android:layout_width="40dp"
+        android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:background="@drawable/button_state_selector"
         android:gravity="center"

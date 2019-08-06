@@ -1,5 +1,5 @@
-# addsubviewdem
->  是一个数量加减控件，简单好用.
+# addsubviewdemo
+>  addsubviewdemo 是一个数量加减控件，简单好用.
 
 ## 1.在build.gralde中添加
 ```
